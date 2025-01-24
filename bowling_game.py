@@ -32,20 +32,12 @@ class BowlingGame:
 
     def strike_bonus(self, frame_index):
         """Calculates the bonus of a strike."""
-        bonus = 0
         next_frames = self.frames[frame_index + 1:]
         rolls = [roll for frame in next_frames for roll in frame]
-        bonus += sum(rolls[:2])
-        return bonus
+        return sum(rolls[:2])
 
     def spare_bonus(self, frame_index):
-        """Calculates the bonus of a sparegame = BowlingGame()
-        for _ in range(12):
-            game.roll(10)
-        if game.score() != 300:
-            print(f"Test Perfect Game Failed: Expected 300, got {game.score()}")
-        else:
-            print("Test Perfect Game Passed!")."""
+        """Calculates the bonus of a sparegame"""
         if frame_index + 1 < len(self.frames):
             return self.frames[frame_index + 1][0]
         return 0
