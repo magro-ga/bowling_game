@@ -10,11 +10,6 @@ This project implements a bowling game scoring system. The game accepts inputs f
 - **Key Methods**:
   1. `roll(pins)`: Records the number of pins knocked down in a roll.
   2. `score()`: Calculates the total score of the game.
-  3. `is_strike(frame)`: Checks if a frame is a strike (10 pins on the first roll).
-  4. `is_spare(frame)`: Checks if a frame is a spare (10 pins over two rolls in the frame).
-  5. `strike_bonus(frame_index)`: Calculates the bonus for a strike (next two rolls).
-  6. `spare_bonus(frame_index)`: Calculates the bonus for a spare (next roll).
-  7. `convert_input(pins)`: Converts input characters ('X' and '/') to pin numbers.
 
 ### Bowling Rules Implemented
 - A game consists of 10 frames, each with up to two rolls unless a strike occurs.
@@ -22,50 +17,32 @@ This project implements a bowling game scoring system. The game accepts inputs f
 - A spare ('/') means 10 pins knocked down over two rolls in a frame.
 - The 10th frame can have up to three rolls if a strike or spare is rolled.
 
-## Features
-- Accepts 'X' for strikes (10 pins).
-- Accepts '/' for spares (remaining pins to make 10).
-- Calculates the total score of the game.
-
 ## Design Pattern
-We used the **State Pattern** to handle the different states of a frame (strike, spare, normal). This pattern was chosen because:
-- It provides clarity and ease of maintenance by isolating the logic for each state.
-- It allows for easy extensibility if new states need to be added.
-- It simplifies debugging and testing by encapsulating state-specific behavior.
 
-Other patterns like Strategy, Template Method, and Observer were not used because they either do not fit the fixed and predictable nature of the game's states or add unnecessary complexity.
+### State Pattern
 
+The State Pattern is used to manage the different states of a frame (e.g., open frame, spare, strike). Each state has its own logic for calculating the score and transitioning to the next state.
 
-## Tests
-The implementation includes several predefined tests to validate the game's scoring system. Each test prints the result (PASS/FAIL) with the expected and actual scores for transparency.
+### States Mapped
 
-## Test Cases
-1. **Perfect Game**: All strikes.
-   - Example rolls: `['X'] * 12`
-   - Expected score: 300
-   - Example output: `Perfect Game: PASS`
+1. **OpenFrame**: Represents a frame where neither a strike nor a spare has been scored.
+2. **SpareFrame**: Represents a frame where a spare has been scored.
+3. **StrikeFrame**: Represents a frame where a strike has been scored.
 
-2. **Gutter Game**: All rolls knock down 0 pins.
-   - Example rolls: `[0] * 20`
-   - Expected score: 0
-   - Example output: `Gutter Game: PASS`
+### Why Use the State Pattern?
 
-3. **Mixed Game**: A mix of strikes, spares, and normal rolls.
-   - Example rolls: `['X', 7, '/', 9, 0, 'X', 0, 8, 8, '/', 0, 6, 'X', 'X', 'X', 8, 1]`
-   - Expected score: 167
-   - Example output: `Mixed Game: PASS`
+- **Clarity and Maintenance**: Isolates the logic for each state, making the code easier to understand and modify.
+- **Extensibility**: Allows for easy addition of new states without modifying existing code.
+- **Simplified Debugging and Testing**: Encapsulates state-specific behavior, making it easier to test each state independently.
 
-4. **10th Frame Bonus**: All strikes in the 10th frame.
-   - Example rolls: `['X'] * 12`
-   - Expected score: 300
-   - Example output: `Tenth Frame: PASS`
+### Why Not Use Other Patterns?
 
-5. **Spare Game**: Every frame is a spare with 5 pins each roll.
-   - Example rolls: `[5, '/'] * 10 + [5]`
-   - Expected score: 150
-   - Example output: `Spare Game: PASS`
+- **Strategy Pattern**: Not suitable as the game's states are fixed and predictable.
+- **Template Method Pattern**: Does not provide the same level of flexibility and clarity for handling state transitions.
+- **Observer Pattern**: Adds unnecessary complexity for handling the states of a bowling game frame.
 
 ### Running Tests
+
 To execute the tests, run the Python script:
 ```bash
 python test_bowling_game.py
