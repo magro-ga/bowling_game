@@ -1,6 +1,7 @@
-# Bowling Game Implementation
+# Bowling Game
 
-This project implements a simple bowling game scoring system in Python. The program calculates the total score of a bowling game based on user input and tests its behavior through predefined scenarios.
+## Overview
+This project implements a bowling game scoring system. The game accepts inputs for the number of pins knocked down in each roll, including special characters for strikes ('X') and spares ('/').
 
 ## How It Works
 
@@ -13,57 +14,58 @@ This project implements a simple bowling game scoring system in Python. The prog
   4. `is_spare(frame)`: Checks if a frame is a spare (10 pins over two rolls in the frame).
   5. `strike_bonus(frame_index)`: Calculates the bonus for a strike (next two rolls).
   6. `spare_bonus(frame_index)`: Calculates the bonus for a spare (next roll).
+  7. `convert_input(pins)`: Converts input characters ('X' and '/') to pin numbers.
 
 ### Bowling Rules Implemented
 - A game consists of 10 frames, each with up to two rolls unless a strike occurs.
-- **Strike**: All 10 pins are knocked down in the first roll of a frame. Bonus: Pins knocked down in the next two rolls.
-- **Spare**: All 10 pins are knocked down across two rolls of a frame. Bonus: Pins knocked down in the next roll.
-- **10th Frame**: Special handling to allow up to three rolls if a strike or spare occurs.
+- A strike ('X') means 10 pins knocked down on the first roll.
+- A spare ('/') means 10 pins knocked down over two rolls in a frame.
+- The 10th frame can have up to three rolls if a strike or spare is rolled.
 
-### Edge Cases Covered
-- Gutter Game: All rolls knock down 0 pins.
-- Perfect Game: All rolls are strikes (score of 300).
-- Mixed Game: Combination of strikes, spares, and normal rolls.
+## Features
+- Accepts 'X' for strikes (10 pins).
+- Accepts '/' for spares (remaining pins to make 10).
+- Calculates the total score of the game.
+
+## Design Pattern
+We used the **State Pattern** to handle the different states of a frame (strike, spare, normal). This pattern was chosen because:
+- It provides clarity and ease of maintenance by isolating the logic for each state.
+- It allows for easy extensibility if new states need to be added.
+- It simplifies debugging and testing by encapsulating state-specific behavior.
+
+Other patterns like Strategy, Template Method, and Observer were not used because they either do not fit the fixed and predictable nature of the game's states or add unnecessary complexity.
+
 
 ## Tests
 The implementation includes several predefined tests to validate the game's scoring system. Each test prints the result (PASS/FAIL) with the expected and actual scores for transparency.
 
-### Test Cases
-1. **Perfect Game**: 12 strikes in a row.
+## Test Cases
+1. **Perfect Game**: All strikes.
+   - Example rolls: `['X'] * 12`
    - Expected score: 300
    - Example output: `Perfect Game: PASS`
 
-2. **Gutter Game**: All rolls score 0.
+2. **Gutter Game**: All rolls knock down 0 pins.
+   - Example rolls: `[0] * 20`
    - Expected score: 0
    - Example output: `Gutter Game: PASS`
 
 3. **Mixed Game**: A mix of strikes, spares, and normal rolls.
-   - Example rolls: `[10, 7, 3, 9, 0, 10, 0, 8, 8, 2, 0, 6, 10, 10, 10, 8, 1]`
+   - Example rolls: `['X', 7, '/', 9, 0, 'X', 0, 8, 8, '/', 0, 6, 'X', 'X', 'X', 8, 1]`
    - Expected score: 167
    - Example output: `Mixed Game: PASS`
 
 4. **10th Frame Bonus**: All strikes in the 10th frame.
+   - Example rolls: `['X'] * 12`
    - Expected score: 300
    - Example output: `Tenth Frame: PASS`
 
 5. **Spare Game**: Every frame is a spare with 5 pins each roll.
+   - Example rolls: `[5, '/'] * 10 + [5]`
    - Expected score: 150
    - Example output: `Spare Game: PASS`
 
 ### Running Tests
 To execute the tests, run the Python script:
 ```bash
-python bowling_game.py
-```
-The output will indicate whether each test passed or failed.
-
-## Example Output
-```
-Iniciando os testes...
-Perfect Game: PASS
-Gutter Game: PASS
-Mixed Game: PASS
-Tenth Frame: PASS
-Spare Game: PASS
-Testes finalizados!
-```
+python test_bowling_game.py
