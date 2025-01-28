@@ -1,7 +1,7 @@
 # Bowling Game
 
 ## Overview
-This project implements a bowling game scoring system. The game accepts inputs for the number of pins knocked down in each roll, including special characters for strikes ('X') and spares ('/').
+This project implements a bowling game scoring system. The game accepts inputs for the number of pins knocked down in each roll.
 
 ## How It Works
 
@@ -10,8 +10,8 @@ This project implements a bowling game scoring system. The game accepts inputs f
 
 ### Bowling Rules Implemented
 - A game consists of 10 frames, each with up to two rolls unless a strike occurs.
-- A strike ('X') means 10 pins knocked down on the first roll.
-- A spare ('/') means 10 pins knocked down over two rolls in a frame.
+- A strike means 10 pins knocked down on the first roll.
+- A spare means 10 pins knocked down over two rolls in a frame.
 - The 10th frame can have up to three rolls if a strike or spare is rolled.
 
 ## Design Pattern
@@ -38,8 +38,15 @@ The State Pattern is used to manage the different states of a frame (e.g., open 
 - **Template Method Pattern**: Does not provide the same level of flexibility and clarity for handling state transitions.
 - **Observer Pattern**: Adds unnecessary complexity for handling the states of a bowling game frame.
 
-### Running Tests
+## Running Tests and VS Code Configuration
 
-To execute the tests, run the Python script:
+To execute the tests or simulate, run the Python script and ensure that Visual Studio Code can find the modules correctly when running the debug, create a settings.json file in the .vscode directory with the following content:
 ```bash
-python test_bowling_game.py
+python3 debug.py
+python3 -m unittest test.bowling_game_test
+
+{
+    "python.analysis.extraPaths": [
+        "./lib"
+    ]
+}
