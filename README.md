@@ -7,9 +7,6 @@ This project implements a bowling game scoring system. The game accepts inputs f
 
 ### Core Class: `BowlingGame`
 - **Purpose**: Tracks the game's frames and calculates the total score according to bowling rules.
-- **Key Methods**:
-  1. `roll(pins)`: Records the number of pins knocked down in a roll.
-  2. `score()`: Calculates the total score of the game.
 
 ### Bowling Rules Implemented
 - A game consists of 10 frames, each with up to two rolls unless a strike occurs.

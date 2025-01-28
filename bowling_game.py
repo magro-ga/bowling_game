@@ -1,92 +1,79 @@
+import random
+from frame import Frame
+from roll import Roll
+
 class BowlingGame:
     def __init__(self):
         self.frames = []
 
-    def roll(self, pins):
-        pins = self.convert_input(pins)
-        if not self.frames or len(self.frames[-1]) == 2 or sum(self.frames[-1]) == 10:
-            self.frames.append([pins])
-        else:
-            self.frames[-1].append(pins)
-
-    def convert_input(self, pins):
-        if pins == 'X':
-            return 10
-        elif pins == '/':
-            return 10 - self.frames[-1][0]
-        elif pins == '-':
-            return 0
-        else:
-            return int(pins)
-
-    def score(self):
-        total_score = 0
-        for i in range(10):  # Max 10 frames
-            frame = self.frames[i]
-            if self.is_strike(frame):
-                total_score += 10 + self.strike_bonus(i)
-            elif self.is_spare(frame):
-                total_score += 10 + self.spare_bonus(i)
+    def execute(self):
+        for i in range(10):
+            new_frame = Frame(i + 1)
+            if i == 9:
+                new_frame.rolls = [Roll(), Roll(), Roll()]
             else:
-                total_score += sum(frame)
-        return total_score
+                new_frame.rolls = [Roll(), Roll()]
+            self.frames.append(new_frame)
+
+        for i in range(10):
+            current_frame = self.frames[i]
+            for roll_index, roll in enumerate(current_frame.rolls):
+                if roll_index == 0:
+                    roll.pins = random.randint(0, 10)
+                    if roll.pins == 10 and i != 9:
+                        break
+                else:
+                    remaining_pins = 10 - sum(roll.pins for roll in current_frame.rolls[:roll_index])
+                    roll.pins = random.randint(0, remaining_pins)
+                    if roll_index == 1 and current_frame.rolls[0].pins + roll.pins == 10 and i != 9:  # Spare e não é o último frame
+                        break
+
+            if i == 9:
+                if self.is_strike(current_frame) or self.is_spare(current_frame):
+                    current_frame.rolls[2].pins = random.randint(0, 10)
+                else:
+                    current_frame.rolls[2].pins = 0
+
+            if self.is_strike(current_frame):
+                current_frame.type = "strike"
+                current_frame.score = 10 + self.strike_bonus(i)
+            elif self.is_spare(current_frame):
+                current_frame.type = "spare"
+                current_frame.score = 10 + self.spare_bonus(i)
+            else:
+                current_frame.type = "open"
+                current_frame.score = sum(roll.pins for roll in current_frame.rolls[:2])
+
+        total_score = 0
+        for i, frame in enumerate(self.frames):
+            if i == 9 and (frame.type == "strike" or frame.type == "spare"):
+                frame.score = sum(roll.pins for roll in frame.rolls)
+            else:
+                if frame.type == "strike":
+                    frame.score += self.strike_bonus(i)
+                elif frame.type == "spare":
+                    frame.score += self.spare_bonus(i)
+            total_score += frame.score
+            print(f"Frame {i+1}: {frame.type.capitalize()} - Score: {total_score}")
+        print(f"Total Score: {total_score}")
 
     def is_strike(self, frame):
-        return len(frame) == 1 and frame[0] == 10
+        return len(frame.rolls) > 0 and frame.rolls[0].pins == 10
 
     def is_spare(self, frame):
-        return len(frame) == 2 and sum(frame) == 10
+        return len(frame.rolls) > 1 and frame.rolls[0].pins + frame.rolls[1].pins == 10
 
     def strike_bonus(self, frame_index):
-        next_frames = self.frames[frame_index + 1:]
-        rolls = [roll for frame in next_frames for roll in frame]
-        return sum(rolls[:2])
+        next_rolls = []
+        for i in range(frame_index + 1, min(frame_index + 3, 10)):
+            next_rolls.extend(self.frames[i].rolls)
+        return sum(roll.pins for roll in next_rolls[:2])
 
     def spare_bonus(self, frame_index):
-        if frame_index + 1 < len(self.frames):
-            return self.frames[frame_index + 1][0]
+        next_frames = self.frames[frame_index + 1:]
+        if next_frames:
+            return next_frames[0].rolls[0].pins
         return 0
 
-def parse_rolls(frames):
-    rolls = []
-    frames_list = frames.split()
-    
-    for i, frame in enumerate(frames_list):
-        if i < 9:
-            if frame == 'X':  # strike
-                rolls.append(10)
-            elif '/' in frame:  # spare
-                rolls.append(int(frame[0]) if frame[0] != '-' else 0)
-                rolls.append(10 - (int(frame[0]) if frame[0] != '-' else 0))
-            else:
-                rolls.append(int(frame[0]) if frame[0] != '-' else 0)
-                rolls.append(int(frame[1]) if frame[1] != '-' else 0)
-        else:
-            rolls.extend(
-                10 if char == 'X' else 10 - rolls[-1] if char == '/' else 0 if char == '-' else int(char)
-                for char in frame
-            )   
-
-    return rolls
-
-def calculate_score(rolls):
-    total_score = 0
-    roll_index = 0
-    
-    for frame in range(9):
-        if rolls[roll_index] == 10:
-            total_score += 10 + rolls[roll_index + 1] + rolls[roll_index + 2]
-            roll_index += 1
-        elif rolls[roll_index] + rolls[roll_index + 1] == 10:
-            total_score += 10 + rolls[roll_index + 2]
-            roll_index += 2
-        else:
-            total_score += rolls[roll_index] + rolls[roll_index + 1]
-            roll_index += 2    
-        
-    total_score += sum(rolls[roll_index:roll_index + 3])
-    return total_score
-
-def bowling_score(frames):
-    rolls = parse_rolls(frames)
-    return calculate_score(rolls)
+    def total_score(self):
+        return sum(frame.score for frame in self.frames)
