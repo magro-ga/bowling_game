@@ -3,13 +3,20 @@ class Frame:
         self.rolls = []
         self.is_last_frame = last_frame
 
-    def add_roll(self, roll):
-        if not self.is_last_frame and (len(self.rolls) >= 2 or (len(self.rolls) == 1 and self.rolls[0] == 10)):
-            raise ValueError("Invalid roll: Frame is already complete")
-        if self.is_last_frame and len(self.rolls) >= 3:
-            raise ValueError("Invalid roll: Frame is already complete")
+    def add_roll(self, pins):
+        if self.is_complete():
+            raise ValueError("Frame is now complete")
 
-        self.rolls.append(roll)
+        if self.is_last_frame:
+            self.rolls.append(pins)
+            return
+
+        if len(self.rolls) == 1:
+            max_possible = 10 - self.rolls[0]
+            if pins == 10:
+                pins = 0
+            pins = min(pins, max_possible)
+        self.rolls.append(pins)
 
     def is_complete(self):
         if self.is_last_frame:
@@ -17,19 +24,25 @@ class Frame:
         return self.is_strike() or len(self.rolls) == 2
 
     def is_strike(self):
-        return self.rolls and self.rolls[0] == 10
+        return len(self.rolls) == 1 and self.rolls[0] == 10
 
     def is_spare(self):
-        return len(self.rolls) >= 2 and sum(self.rolls[:2]) == 10
+        return len(self.rolls) == 2 and sum(self.rolls) == 10
 
-    def remaining_pins(self):
+    def total_pins(self):
+        return sum(self.rolls)
+
+    def rolls_with_default(self):
         if self.is_last_frame:
-            if len(self.rolls) == 1 and self.is_strike():
-                return 10
-            elif len(self.rolls) == 2 and self.is_strike():
-                return 10
-            elif len(self.rolls) == 2 and self.is_spare():
-                return 10
-            elif len(self.rolls) == 3:
-                return 0
-        return 10 - sum(self.rolls)
+            return self.rolls
+
+        if self.is_strike():
+            return [10]
+
+        if not self.rolls:
+            return [0, 0]
+
+        return self.rolls if len(self.rolls) == 2 else [self.rolls[0], 0]
+
+    def __repr__(self):
+        return f"Frame({self.rolls})"

@@ -67,6 +67,15 @@ class BowlingGameTest(unittest.TestCase):
         self.assertEqual(73, self.game.score(), "ERROR: Game with no strikes or spares should have a score of 73")
         print("DONE: Game with no strikes or spares passed with score 73.\n")
 
+    def test_without_a_second_roll(self):
+        print("- Testing Without a second roll...")
+        rolls = [10, 3, 6, 7, 3, 10, 10, 2, 8, 6, 10, 10, 10, 5, 5, 10]
+        expected_score = 177
+        for pins in rolls:
+            self.game.roll(pins)
+        self.assertEqual(expected_score, self.game.score(), f"ERROR: Testing Without a second roll should have a score of {expected_score}")
+        print(f"DONE: Testing Without a second roll passed with score {expected_score}.\n")
+
     def test_last_frame_spare(self):
         print("- Testing Spare in the last frame...")
         self.roll_multiple(18, 0)

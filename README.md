@@ -14,6 +14,24 @@ This project implements a bowling game scoring system. The game accepts inputs f
 - A spare means 10 pins knocked down over two rolls in a frame.
 - The 10th frame can have up to three rolls if a strike or spare is rolled.
 
+## Scoring
+
+### Basic Scoring
+- Each pin knocked down is worth 1 point.
+- The score for each frame is the total number of pins knocked down in that frame.
+
+### Strikes
+- A strike is when all 10 pins are knocked down on the first roll of a frame.
+- The score for a strike frame is 10 plus the total number of pins knocked down in the next two rolls.
+
+### Spares
+- A spare is when all 10 pins are knocked down in two rolls of a frame.
+- The score for a spare frame is 10 plus the number of pins knocked down in the next roll.
+
+### 10th Frame
+- The 10th frame can have up to three rolls if a strike or spare is rolled.
+- The score for the 10th frame includes any bonus rolls.
+
 ## Design Pattern
 
 ### State Pattern
